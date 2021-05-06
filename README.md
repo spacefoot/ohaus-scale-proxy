@@ -26,7 +26,11 @@ Use the systemd unit file `ohaus-scale-proxy.service` and put it on `~/.config/s
 mkdir -p ~/.config/systemd/user/
 cp ohaus-scale-proxy.service ~/.config/systemd/user/
 ```
-> Add argument to match your config
+
+Edit your scale address inside `~/.config/ohaus-scale-proxy.yml`
+```sh
+echo "address: <scale_address>" > ~/.config/ohaus-scale-proxy.yml
+```
 
 Start and enable on boot with
 ```sh
