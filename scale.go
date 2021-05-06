@@ -8,14 +8,19 @@ import (
 	"strings"
 )
 
+type Weight struct {
+	value float64
+	unit  string
+}
+
 type Scale struct {
-	weight    chan float64
+	weight    chan Weight
 	connected chan bool
 }
 
 func NewScale() *Scale {
 	return &Scale{
-		make(chan float64),
+		make(chan Weight),
 		make(chan bool),
 	}
 }
@@ -33,8 +38,8 @@ func (s *Scale) reader(conn net.Conn) {
 			part := strings.Fields(data)
 			if len(part) >= 3 && part[2] == "N" {
 				if weight, err := strconv.ParseFloat(part[0], 64); err == nil {
-					log.Println("weight:", weight)
-					s.weight <- weight
+					log.Println("weight:", weight, part[1])
+					s.weight <- Weight{weight, part[1]}
 				}
 			}
 		}

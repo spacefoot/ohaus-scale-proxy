@@ -11,7 +11,7 @@ type Manager struct {
 	scale      *Scale
 	upgrader   websocket.Upgrader
 	websockets map[*WebsocketClient]bool
-	weight     float64
+	weight     Weight
 	connected  bool
 }
 
@@ -24,7 +24,7 @@ func NewManager(scale *Scale) *Manager {
 			},
 		},
 		map[*WebsocketClient]bool{},
-		0,
+		Weight{0, ""},
 		false,
 	}
 }
@@ -42,11 +42,12 @@ func (m *Manager) broadcast(data interface{}) {
 func (m *Manager) Run() {
 	for {
 		select {
-		case weight := <-m.scale.weight:
-			m.weight = weight
+		case w := <-m.scale.weight:
+			m.weight = w
 			m.broadcast(map[string]interface{}{
 				"type": "weight",
-				"data": weight,
+				"data": w.value,
+				"unit": w.unit,
 			})
 		case connected := <-m.scale.connected:
 			m.connected = connected
