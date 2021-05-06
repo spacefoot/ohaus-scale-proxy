@@ -7,4 +7,4 @@ RestartSec=5
 ExecStart=%h/.bin/ohaus-scale-proxy -config %h/.config/ohaus-scale-proxy.yml
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=default.target
