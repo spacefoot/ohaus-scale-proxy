@@ -1,0 +1,10 @@
+[Unit]
+Description=OHAUS scale proxy
+
+[Service]
+Restart=always
+RestartSec=5
+ExecStart=%h/.bin/ohaus-scale-proxy
+
+[Install]
+WantedBy=multi-user.target
