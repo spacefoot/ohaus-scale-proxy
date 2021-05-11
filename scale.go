@@ -6,6 +6,7 @@ import (
 	"net"
 	"strconv"
 	"strings"
+	"time"
 )
 
 type Weight struct {
@@ -57,5 +58,6 @@ func (s *Scale) Run(addr string) {
 			log.Println("Scale disconnected")
 			s.connected <- false
 		}
+		<-time.NewTimer(2 * time.Second).C
 	}
 }
