@@ -46,3 +46,20 @@ Get the process log history with
 ```sh
 journalctl --user-unit ohaus-scale-proxy
 ```
+
+## Example
+```js
+const socket = new WebSocket('ws://127.0.0.1:23193/ws');
+
+socket.addEventListener('message', event => {
+    const payload = JSON.parse(event.data);
+    switch (payload.type) {
+        case 'weight':
+            console.log(`${payload.data} ${payload.unit}`);
+            break;
+        case 'connected':
+            console.log(`connected: ${payload.data}`);
+            break;
+    }
+});
+``` 
