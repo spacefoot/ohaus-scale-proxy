@@ -62,4 +62,10 @@ socket.addEventListener('message', event => {
             break;
     }
 });
-``` 
+```
+
+possible output
+```
+connected: true
+534 g
+```
