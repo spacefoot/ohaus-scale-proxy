@@ -10,8 +10,9 @@ import (
 )
 
 type Weight struct {
-	value float64
-	unit  string
+	value  float64
+	unit   string
+	stable bool
 }
 
 type Scale struct {
@@ -37,10 +38,10 @@ func (s *Scale) reader(conn net.Conn) {
 
 		if strings.HasPrefix(data, "      ") {
 			part := strings.Fields(data)
-			if len(part) >= 3 && part[2] == "N" {
+			if len(part) == 2 || (len(part) >= 3 && part[2] == "?") {
 				if weight, err := strconv.ParseFloat(part[0], 64); err == nil {
-					log.Println("weight:", weight, part[1])
-					s.weight <- Weight{weight, part[1]}
+					//log.Println("weight:", weight, part[1])
+					s.weight <- Weight{weight, part[1], len(part) == 2}
 				}
 			}
 		}

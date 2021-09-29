@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/gorilla/websocket"
 )
@@ -13,19 +14,18 @@ type Manager struct {
 	websockets map[*WebsocketClient]bool
 	weight     Weight
 	connected  bool
+	last       time.Time
 }
 
 func NewManager(scale *Scale) *Manager {
 	return &Manager{
-		scale,
-		websocket.Upgrader{
+		scale: scale,
+		upgrader: websocket.Upgrader{
 			CheckOrigin: func(r *http.Request) bool {
 				return true
 			},
 		},
-		map[*WebsocketClient]bool{},
-		Weight{0, ""},
-		false,
+		websockets: map[*WebsocketClient]bool{},
 	}
 }
 
@@ -43,12 +43,16 @@ func (m *Manager) Run() {
 	for {
 		select {
 		case w := <-m.scale.weight:
-			m.weight = w
-			m.broadcast(map[string]interface{}{
-				"type": "weight",
-				"data": w.value,
-				"unit": w.unit,
-			})
+			if m.weight.stable != w.stable || (m.weight.value != w.value && time.Since(m.last) > time.Millisecond*100) {
+				m.weight = w
+				m.broadcast(map[string]interface{}{
+					"type":   "weight",
+					"data":   w.value,
+					"unit":   w.unit,
+					"stable": w.stable,
+				})
+				m.last = time.Now()
+			}
 		case connected := <-m.scale.connected:
 			m.connected = connected
 			m.broadcast(map[string]interface{}{
